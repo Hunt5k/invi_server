@@ -1,0 +1,67 @@
+Router A
+Hostname Router A
+int s0/1/0
+ip address 192.168.1.1 255.255.255.0
+no shut
+exit
+router ospf 1
+router-id 1.1.1.1
+network 192.168.1.1 0.0.0.3 area 0
+exit
+int s0/1/0
+ip ospf 1 area 1
+exit
+int loopback 0
+ip address 172.16.1.1 255.255.0.0
+exit
+
+
+Router B
+Hostname RouterB
+int s0/1/0
+ip address 192.168.1.2 255.255.255.0
+no shut
+exit
+int s0/1/1
+ip address 192.168.2.1 255.255.255.0
+no shut
+exit
+router ospf 1
+router-id 2.2.2.2
+network 192.168.1.0 0.0.0.3 area 0
+network 192.168.2.0 0.0.0.3 area 0
+exit
+int s0/1/0
+ip ospf 1 area 0
+int s0/1/1
+ip ospf 1 area 0
+
+
+Router C
+Hostname RouterC
+int s0/1/0
+ip address 192.168.2.2 255.255.255.0
+no shut
+exit
+router ospf 1
+router-id 3.3.3.3
+network 192.168.2.2 0.0.0.3 area 0
+int s0/1/0
+ip ospf 1 area 2
+exit
+loopback 0
+ip address 10.0.0.1 255.255.0.0
+
+Router A
+Access-list 110 deny icmp 192.168.2.2 0.0.0.3
+Access-list 110 permit ip any any
+Int s0/1/0
+Ip address 192.168.1.1 255.255.255.252
+Ip access-group 110 in
+
+Router C
+Access-list 110 deny tcp any any eq 80
+Access-list 110 permit ip 
+Int s0/1/0
+Ip address 192.168.1.1 255.255.255.252
+Ip access-group 110 in
